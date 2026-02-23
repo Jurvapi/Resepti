@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Should I Eat Today? 🐰</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8e1ff 0%, #e1f4fd 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: #8b5a9f;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .time-greeting {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .decision-helper {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(139,90,159,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .decision-btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        
+        .btn-surprise {
+            background: linear-gradient(45deg, #ffd1dc, #ffb3c1);
+            color: #8b5a9f;
+        }
+        
+        .btn-quick {
+            background: linear-gradient(45deg, #b8f2ff, #a0e7e5);
+            color: #5a8b8f;
+        }
+        
+        .btn-breakfast {
+            background: linear-gradient(45deg, #ffe4b5, #ffd180);
+            color: #8b6f47;
+        }
+        
+        .btn-lunch {
+            background: linear-gradient(45deg, #c8e6c9, #a5d6a7);
+            color: #4a6741;
+        }
+        
+        .btn-dinner {
+            background: linear-gradient(45deg, #e1bee7, #d1c4e9);
+            color: #6a4c93;
+        }
+        
+        .btn-snack {
+            background: linear-gradient(45deg, #fff9c4, #ffecb3);
+            color: #8b7d3a;
+        }
+        
+        .decision-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .search-container {
+            max-width: 400px;
+            margin: 0 auto 30px auto;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1em;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5a9f;
+            box-shadow: 0 5px 15px rgba(139,90,159,0.2);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 15px;
+            background: #8b5a9f;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #7a4d8c;
+        }
+        
+        .recipe-result {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.5s ease forwards;
+        }
+        
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .recipe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .recipe-title {
+            color: #8b5a9f;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            flex: 1;
+        }
+        
+        .recipe-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .ingredients, .instructions {
+            margin-bottom: 20px;
+        }
+        
+        .ingredients h3, .instructions h3 {
+            color: #8b5a9f;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .ingredients-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .ingredient-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #8b5a9f;
+        }
+        
+        .instructions p {
+            line-height: 1.6;
+            color: #555;
+            font-size: 1.1em;
+        }
+        
+        .category-badge {
+            background: linear-gradient(45deg, #8b5a9f, #a569bd);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .new-recipe-btn {
+            background: linear-gradient(45deg, #ff6b9d, #ff8e9b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .new-recipe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,157,0.3);
+        }
+        
+        .search-results {
+            margin-top: 20px;
+        }
+        
+        .search-results h3 {
+            color: #8b5a9f;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .recipe-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .recipe-card h4 {
+            color: #8b5a9f;
+            margin-bottom: 10px;
+        }
+        
+        .recipe-card-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .recipe-card-meta span {
+            font-size: 0.8em;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 10px;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(139,90,159,0.2);
+            color: #8b5a9f;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .decision-helper {
+                padding: 20px;
+            }
+            
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .recipe-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .ingredients-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>What Should I Eat Today? 🐰</h1>
+            <div class="time-greeting" id="timeGreeting"></div>
+        </div>
+
+        <div class="decision-helper">
+            <h2 style="text-align: center; margin-bottom: 25px; color: #8b5a9f;">Let's find you something delicious!</h2>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search recipes by ingredient or name...">
+                <button class="search-btn" onclick="searchRecipes()">🔍</button>
+            </div>
+
+            <div class="button-grid">
+                <button class="decision-btn btn-surprise" onclick="getRandomRecipe()">
+                    🎲 Surprise Me!
+                </button>
+                <button class="decision-btn btn-quick" onclick="getQuickRecipe()">
+                    ⚡ Something Quick (≤10min)
+                </button>
+                <button class="decision-btn btn-breakfast" onclick="getCategoryRecipe('breakfast')">
+                    🍳 Breakfast
+                </button>
+                <button class="decision-btn btn-lunch" onclick="getCategoryRecipe('lunch')">
+                    🥗 Lunch
+                </button>
+                <button class="decision-btn btn-dinner" onclick="getCategoryRecipe('dinner')">
+                    🍝 Dinner
+                </button>
+                <button class="decision-btn btn-snack" onclick="getCategoryRecipe('snacks')">
+                    🍎 Snacks
+                </button>
+            </div>
+        </div>
+
+        <div id="recipeResult"></div>
+        <div id="searchResults"></div>
+
+        <div class="footer">
+            <p>Made with 💜 by Maaret & Pirre | Vibekoodattu reseptisovellus</p>
+        </div>
+    </div>
+
+    <script>
+        // Recipe data converted from Python
+        const RECIPES = {
+            "breakfast": [
+                {
+                    "name": "Pirre's Perfect Scrambled Eggs",
+                    "time": 5,
+                    "difficulty": "Easy",
+                    "ingredients": ["3 eggs", "2 tbsp butter", "salt", "pepper", "chives"],
+                    "instructions": "Whisk eggs, melt butter in pan, add eggs on low heat, stir gently until creamy."
+                },
+                {
+                    "name": "Pirre's Overnight Oats",
+                    "time": 2,
+                    "difficulty": "Easy",
+                    "ingredients": ["1/2 cup oats", "1/2 cup milk", "1 tbsp chia seeds", "honey", "berries"],
+                    "instructions": "Mix all ingredients, refrigerate overnight. Add toppings in the morning."
+                },
+                {
+                    "name": "Pirre's Avocado Toast",
+                    "time": 5,
+                    "difficulty": "Easy",
+                    "ingredients": ["2 slices bread", "1 ripe avocado", "salt", "pepper", "lemon juice", "red pepper flakes"],
+                    "instructions": "Toast bread, mash avocado with seasonings, spread on toast."
+                }
+            ],
+            "lunch": [
+                {
+                    "name": "Pirre's Quick Caesar Salad",
+                    "time": 10,
+                    "difficulty": "Easy",
+                    "ingredients": ["romaine lettuce", "caesar dressing", "parmesan cheese", "croutons", "chicken breast (optional)"],
+                    "instructions": "Wash and chop lettuce, toss with dressing, add toppings."
+                },
+                {
+                    "name": "Pirre's Grilled Cheese & Tomato Soup",
+                    "time": 15,
+                    "difficulty": "Easy",
+                    "ingredients": ["bread", "cheese", "butter", "canned tomato soup"],
+                    "instructions": "Make grilled cheese in pan with butter, heat soup, serve together."
+                },
+                {
+                    "name": "Pirre's Mediterranean Bowl",
+                    "time": 12,
+                    "difficulty": "Easy",
+                    "ingredients": ["quinoa", "cucumber", "tomatoes", "feta cheese", "olives", "olive oil", "lemon"],
+                    "instructions": "Cook quinoa, chop vegetables, combine with cheese and olives, dress with oil and lemon."
+                }
+            ],
+            "dinner": [
+                {
+                    "name": "Pirre's One-Pot Pasta",
+                    "time": 20,
+                    "difficulty": "Easy",
+                    "ingredients": ["pasta", "canned tomatoes", "garlic", "onion", "olive oil", "basil", "parmesan"],
+                    "instructions": "Saute onion and garlic, add tomatoes and pasta with water, cook until tender."
+                },
+                {
+                    "name": "Pirre's Honey Garlic Salmon",
+                    "time": 25,
+                    "difficulty": "Medium",
+                    "ingredients": ["salmon fillets", "honey", "soy sauce", "garlic", "ginger", "rice", "broccoli"],
+                    "instructions": "Mix honey, soy sauce, garlic. Bake salmon with glaze, serve with rice and steamed broccoli."
+                },
+                {
+                    "name": "Pirre's Chicken Stir Fry",
+                    "time": 18,
+                    "difficulty": "Medium",
+                    "ingredients": ["chicken breast", "mixed vegetables", "soy sauce", "garlic", "ginger", "rice"],
+                    "instructions": "Cut chicken, stir fry with vegetables, add sauce, serve over rice."
+                }
+            ],
+            "snacks": [
+                {
+                    "name": "Pirre's Hummus & Veggies",
+                    "time": 3,
+                    "difficulty": "Easy",
+                    "ingredients": ["hummus", "carrots", "cucumber", "bell peppers"],
+                    "instructions": "Cut vegetables into sticks, serve with hummus for dipping."
+                },
+                {
+                    "name": "Pirre's Greek Yogurt Parfait",
+                    "time": 5,
+                    "difficulty": "Easy",
+                    "ingredients": ["greek yogurt", "granola", "berries", "honey"],
+                    "instructions": "Layer yogurt, granola, and berries. Drizzle with honey."
+                },
+                {
+                    "name": "Pirre's Energy Balls",
+                    "time": 10,
+                    "difficulty": "Easy",
+                    "ingredients": ["oats", "peanut butter", "honey", "chocolate chips", "chia seeds"],
+                    "instructions": "Mix all ingredients, roll into balls, chill for 30 minutes."
+                }
+            ]
+        };
+
+        // Initialize the app
+        function initializeApp() {
+            setTimeGreeting();
+            
+            // Allow search on Enter key press
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchRecipes();
+                }
+            });
+        }
+
+        // Set time-based greeting
+        function setTimeGreeting() {
+            const currentHour = new Date().getHours();
+            let greeting;
+
+            if (currentHour >= 6 && currentHour < 11) {
+                greeting = "Good morning! How about some breakfast?";
+            } else if (currentHour >= 11 && currentHour < 16) {
+                greeting = "It's lunch time! Let's find you something delicious.";
+            } else if (currentHour >= 16 && currentHour < 21) {
+                greeting = "Dinner time! Let's cook something great.";
+            } else {
+                greeting = "Late night snack? I've got ideas!";
+            }
+
+            document.getElementById('timeGreeting').textContent = greeting;
+        }
+
+        // Get random recipe from any category
+        function getRandomRecipe() {
+            const allRecipes = [];
+            for (const [category, recipes] of Object.entries(RECIPES)) {
+                recipes.forEach(recipe => {
+                    allRecipes.push({...recipe, category});
+                });
+            }
+            
+            const randomRecipe = allRecipes[Math.floor(Math.random() * allRecipes.length)];
+            displayRecipe(randomRecipe);
+            clearSearchResults();
+        }
+
+        // Get recipe from specific category
+        function getCategoryRecipe(category) {
+            if (!RECIPES[category]) {
+                alert('Category not found!');
+                return;
+            }
+            
+            const recipes = RECIPES[category];
+            const recipe = recipes[Math.floor(Math.random() * recipes.length)];
+            displayRecipe({...recipe, category});
+            clearSearchResults();
+        }
+
+        // Get quick recipes (≤10 minutes)
+        function getQuickRecipe() {
+            const quickRecipes = [];
+            for (const [category, recipes] of Object.entries(RECIPES)) {
+                recipes.forEach(recipe => {
+                    if (recipe.time <= 10) {
+                        quickRecipes.push({...recipe, category});
+                    }
+                });
+            }
+            
+            if (quickRecipes.length === 0) {
+                alert('No quick recipes found!');
+                return;
+            }
+            
+            const recipe = quickRecipes[Math.floor(Math.random() * quickRecipes.length)];
+            displayRecipe(recipe);
+            clearSearchResults();
+        }
+
+        // Search recipes
+        function searchRecipes() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!query) {
+                alert('Please enter a search term!');
+                return;
+            }
+            
+            const matchingRecipes = [];
+            for (const [category, recipes] of Object.entries(RECIPES)) {
+                recipes.forEach(recipe => {
+                    // Search in recipe name and ingredients
+                    const nameMatch = recipe.name.toLowerCase().includes(query);
+                    const ingredientMatch = recipe.ingredients.some(ingredient => 
+                        ingredient.toLowerCase().includes(query)
+                    );
+                    
+                    if (nameMatch || ingredientMatch) {
+                        matchingRecipes.push({...recipe, category});
+                    }
+                });
+            }
+            
+            displaySearchResults(matchingRecipes, query);
+            clearRecipeResult();
+        }
+
+        // Display a single recipe
+        function displayRecipe(recipe) {
+            const resultDiv = document.getElementById('recipeResult');
+            
+            const recipeHtml = `
+                <div class="recipe-result">
+                    <div class="recipe-header">
+                        <div>
+                            <h2 class="recipe-title">${recipe.name}</h2>
+                            <span class="category-badge">${recipe.category}</span>
+                        </div>
+                        <div class="recipe-meta">
+                            <div class="meta-item">
+                                <span>⏱️ ${recipe.time} min</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>👨‍🍳 ${recipe.difficulty}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ingredients">
+                        <h3>🛒 Ingredients:</h3>
+                        <div class="ingredients-list">
+                            ${recipe.ingredients.map(ingredient => 
+                                `<div class="ingredient-item">${ingredient}</div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>👩‍🍳 Instructions:</h3>
+                        <p>${recipe.instructions}</p>
+                    </div>
+                    
+                    <button class="new-recipe-btn" onclick="getRandomRecipe()">
+                        🎲 Get Another Recipe
+                    </button>
+                </div>
+            `;
+            
+            resultDiv.innerHTML = recipeHtml;
+        }
+
+        // Display search results
+        function displaySearchResults(recipes, query) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (recipes.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="search-results">
+                        <h3>Search Results for "${query}"</h3>
+                        <div class="no-results">No recipes found. Try searching for different ingredients or recipe names.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const resultsHtml = `
+                <div class="search-results">
+                    <h3>Found ${recipes.length} recipe${recipes.length > 1 ? 's' : ''} for "${query}"</h3>
+                    ${recipes.map(recipe => `
+                        <div class="recipe-card" onclick="displayRecipe(${JSON.stringify(recipe).replace(/"/g, '&quot;')})">
+                            <h4>${recipe.name}</h4>
+                            <div class="recipe-card-meta">
+                                <span class="category-badge">${recipe.category}</span>
+                                <span>⏱️ ${recipe.time} min</span>
+                                <span>👨‍🍳 ${recipe.difficulty}</span>
+                            </div>
+                            <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
+                                ${recipe.ingredients.slice(0, 3).join(', ')}${recipe.ingredients.length > 3 ? '...' : ''}
+                            </p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultsHtml;
+        }
+
+        // Clear search results
+        function clearSearchResults() {
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchInput').value = '';
+        }
+
+        // Clear recipe result
+        function clearRecipeResult() {
+            document.getElementById('recipeResult').innerHTML = '';
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
